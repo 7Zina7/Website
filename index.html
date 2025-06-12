@@ -7,24 +7,79 @@
     <style>
         body {
             background-color: #90ee90; /* Light green */
+            background-image: url('1.jpg');
+            background-size: cover;
+            background-position: right top;
+            background-repeat: no-repeat;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
             padding: 0;
         }
+        .navbar {
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(90deg, #145214 0%, #90ee90 50%, #145214 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 3px solid #000;
+        }
+        .navbar::after {
+            content: none;
+        }
+        .navbar-title {
+            color: white;
+            font-size: 2.2em;
+            font-weight: bold;
+            text-shadow: 0 0 20px #fff, 0 0 40px #90ee90, 0 0 60px #90ee90;
+            letter-spacing: 2px;
+        }
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            margin-top: 120px;
+        }
+        .hero-title {
+            color: #fff;
+            font-size: 5em;
+            font-weight: bold;
+            text-shadow: 0 0 20px #fff, 0 0 40px #90ee90, 0 0 60px #90ee90;
+            margin-bottom: 24px;
+        }
+        .hero-subtitle {
+            color: #fff;
+            font-size: 2.5em;
+            font-weight: 500;
+            text-shadow: 0 0 12px #90ee90, 0 0 24px #90ee90;
+            margin-bottom: 40px;
+        }
         .container {
-            margin-top: 50px;
+            margin-top: 80px;
         }
         h1 {
-            color: #222;
+            color: #fff;
             font-size: 5em;
             margin-bottom: 32px;
+            text-shadow: 0 0 20px #fff, 0 0 40px #90ee90, 0 0 60px #90ee90;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Zina Salem</h1>
+    <div class="navbar">
+        <span class="navbar-title">Autobiography</span>
     </div>
+    <section class="hero">
+        <div class="hero-title">Zina Salem</div>
+    </section>
 </body>
 </html>
