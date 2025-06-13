@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicking Game</title>
+    <style>
+        body {
+            background: #222;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .game-container {
+            background: #181c24;
+            border-radius: 1em;
+            box-shadow: 0 0 24px #4fa84f;
+            padding: 2em 3em;
+            text-align: center;
+        }
+        .timer {
+            font-size: 2em;
+            margin-bottom: 1em;
+            color: #90ee90;
+            text-shadow: 0 0 10px #4fa84f;
+        }
+        .click-count {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+            color: #fff;
+        }
+        .click-btn {
+            font-size: 2em;
+            padding: 0.7em 2em;
+            border: none;
+            border-radius: 0.5em;
+            background: #4fa84f;
+            color: #181c24;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px #90ee90;
+            transition: background 0.2s;
+        }
+        .click-btn:active {
+            background: #388e3c;
+        }
+        .restart-btn {
+            margin-top: 1.5em;
+            font-size: 1.2em;
+            padding: 0.5em 1.5em;
+            border: none;
+            border-radius: 0.4em;
+            background: #222;
+            color: #90ee90;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 8px #4fa84f;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="timer" id="timer">Time: 60s</div>
+        <div class="click-count" id="clickCount">Clicks: 0</div>
+        <button class="click-btn" id="clickBtn" disabled>Start</button>
+        <button class="restart-btn" id="restartBtn">Restart</button>
+    </div>
+    <script>
+        let timeLeft = 60;
+        let clicks = 0;
+        let timerInterval = null;
+        const timerEl = document.getElementById('timer');
+        const clickCountEl = document.getElementById('clickCount');
+        const clickBtn = document.getElementById('clickBtn');
+        const restartBtn = document.getElementById('restartBtn');
+
+        function startGame() {
+            timeLeft = 60;
+            clicks = 0;
+            clickCountEl.textContent = 'Clicks: 0';
+            timerEl.textContent = 'Time: 60s';
+            clickBtn.textContent = 'Click Me!';
+            clickBtn.disabled = false;
+            clickBtn.focus();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = `Time: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    clickBtn.disabled = true;
+                    clickBtn.textContent = 'Time Up!';
+                }
+            }, 1000);
+        }
+
+        clickBtn.addEventListener('click', () => {
+            if (timeLeft > 0) {
+                clicks++;
+                clickCountEl.textContent = `Clicks: ${clicks}`;
+            }
+        });
+
+        restartBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            startGame();
+        });
+
+        // Start game on page load
+        window.onload = () => {
+            startGame();
+        };
+    </script>
+</body>
+</html>
