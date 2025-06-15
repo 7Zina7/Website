@@ -7,7 +7,7 @@
     <style>
         body {
             background-color: #181c24;
-            background-image: url('1.jpg');
+            background-image: url('1.png');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
@@ -107,12 +107,15 @@
             <p style="color:#fff;font-size:1.5em;max-width:600px;text-align:center;margin-top:20px;line-height:1.5;background:rgba(0,0,0,0.4);padding:1em 2em;border-radius:0.5em;">Welcome to my personal website! Here you'll find a little about me, my interests, and a fun trivia game. Enjoy exploring and learning more about my world!</p>
         </section>
         <section style="width:100vw;max-width:100vw;display:flex;flex-direction:row;align-items:flex-start;gap:40px;justify-content:flex-start;">
-            <div id="gameBtnContainer" style="width:auto; margin-top: 30px; text-align:left; padding-left: 60px; transition: all 0.4s;">
-                <span id="showGame" style="color:#fff;font-size:4em;font-weight:bold;text-shadow:0 0 20px #000, 0 0 40px #000, 0 0 60px #4fa84f;letter-spacing:2px;font-family:'Arabic Typesetting', serif;background:rgba(0,0,0,0.4);padding:0.2em 0.6em;border-radius:0.3em;cursor:pointer;transition: all 0.4s;">TRIVIA</span>
+            <div id="gameBtnContainer3" style="width:auto; margin-top: 30px; text-align:left; padding-left: 60px; transition: all 0.4s;">
+                <span id="showGameMain" style="color:#fff;font-size:4em;font-weight:bold;text-shadow:0 0 20px #000, 0 0 40px #000, 0 0 60px #4fa84f;letter-spacing:2px;font-family:'Arabic Typesetting', serif;background:rgba(0,0,0,0.4);padding:0.2em 0.6em;border-radius:0.3em;cursor:pointer;transition: all 0.4s;">GAME</span>
+                <span id="triviaAndClickBtns" style="display:none; margin-left: 30px;">
+                    <span id="showGame" style="color:#fff;font-size:2.5em;font-weight:bold;text-shadow:0 0 20px #000, 0 0 40px #000, 0 0 60px #4fa84f;letter-spacing:2px;font-family:'Arial', serif;background:rgba(0,0,0,0.4);padding:0.2em 0.6em;border-radius:0.3em;cursor:pointer;transition: all 0.4s;">TRIVIA</span>
+                    <span id="showGame2" style="color:#fff;font-size:2.5em;font-weight:bold;text-shadow:0 0 20px #000, 0 0 40px #000, 0 0 60px #4fa84f;letter-spacing:2px;font-family:'Arial', serif;background:rgba(0,0,0,0.4);padding:0.2em 0.6em;border-radius:0.3em;cursor:pointer;transition: all 0.4s; margin-left: 20px;">CLICKING CHAMPION</span>
+                </span>
             </div>
-            <div id="interestsBtnContainer" style="width:auto; margin-top: 30px; text-align:left; transition: all 0.4s; display: flex; gap: 20px; align-items: center;">
-                <span id="showInterests" style="color:#fff;font-size:4em;font-weight:bold;text-shadow:0 0 20px #000, 0 0 40px #000, 0 0 60px #4fa84f;letter-spacing:2px;font-family:'Arabic Typesetting', serif;background:rgba(0,0,0,0.4);padding:0.2em 0.6em;border-radius:0.3em;cursor:pointer;transition: all 0.4s;">INTERESTS</span>
-                <span id="showGame2" style="color:#fff;font-size:2.5em;font-weight:bold;text-shadow:0 0 20px #000, 0 0 40px #000, 0 0 60px #4fa84f;letter-spacing:2px;font-family:'Arial', serif;background:rgba(0,0,0,0.4);padding:0.2em 0.6em;border-radius:0.3em;cursor:pointer;transition: all 0.4s;">GAME</span>
+            <div id="meBtnContainer" style="width:auto; margin-top: 30px; text-align:left; padding-left: 60px; transition: all 0.4s;">
+                <span id="showMe" style="color:#fff;font-size:4em;font-weight:bold;text-shadow:0 0 20px #000, 0 0 40px #000, 0 0 60px #4fa84f;letter-spacing:2px;font-family:'Arabic Typesetting', serif;background:rgba(0,0,0,0.4);padding:0.2em 0.6em;border-radius:0.3em;cursor:pointer;transition: all 0.4s;">ME</span>
             </div>
         </section>
         <div style="display:flex;flex-direction:row;align-items:flex-start;gap:40px;justify-content:flex-start;width:100vw;max-width:100vw;overflow:visible;">
@@ -120,7 +123,7 @@
                 <iframe id="gameFrame" src="guess-game.html" style="width:100%;height:90vh;border:none;margin-top:20px;display:block;"></iframe>
             </div>
             <div id="interestsContainer" style="display:none; width:50vw;">
-                <div id="interestsBox" style="width:96%;max-width:700px;margin:30px auto 0 auto;padding:2em 1.5em;font-size:1.7em;font-family:'Arial',sans-serif;background:rgba(76,175,80,0.92);color:#181c24;border-radius:1em;box-shadow:0 0 32px 8px #90ee90, 0 0 12px #4fa84f;text-align:left;text-shadow:0 0 12px #fff, 0 0 24px #fff;letter-spacing:1px;font-weight:bold;outline:4px solid #fff;outline-offset:4px;transition:box-shadow 0.3s,outline 0.3s;max-width:100vw;">
+                <div id="interestsBox" style="width:96%;max-width:700px;margin:30px auto 0 auto;padding:2em 1.5em;font-size:1.7em;font-family:'Arial',sans-serif;background:rgba(255,255,255,0.35);color:#181c24;border-radius:1em;box-shadow:none;text-align:left;text-shadow:0 0 12px #fff, 0 0 24px #fff;letter-spacing:1px;font-weight:bold;outline:none;outline-offset:4px;transition:box-shadow 0.3s,outline 0.3s;max-width:100vw;">
                     <ol style="margin:0 0 0 1.2em;padding:0 0 0 1.2em;">
                         <li>PLAYING VIDEO GAMES: USUALLLY GENSHIN IMAPCT, HONKAI STAR RAIL, ZENLESS ZONE ZERO, AND MORE</li>
                         <li>WATCH ANIME</li>
@@ -140,13 +143,24 @@
         document.addEventListener('DOMContentLoaded', function() {
             var showGame = document.getElementById('showGame');
             var gameContainer = document.getElementById('gameContainer');
-            var gameFrame = document.getElementById('gameFrame');
-            var gameBtnContainer = document.getElementById('gameBtnContainer');
             var centered = false;
 
-            var showInterests = document.getElementById('showInterests');
+            if (showGame && gameContainer) {
+                showGame.onclick = function() {
+                    centered = !centered;
+                    if (centered) {
+                        gameContainer.style.display = 'block';
+                        setTimeout(function() {
+                            window.scrollTo({ top: gameContainer.offsetTop, behavior: 'smooth' });
+                        }, 100);
+                    } else {
+                        gameContainer.style.display = 'none';
+                    }
+                };
+            }
+            var showMe = document.getElementById('showMe');
             var interestsContainer = document.getElementById('interestsContainer');
-            var interestsBtnContainer = document.getElementById('interestsBtnContainer');
+            var meBtnContainer = document.getElementById('meBtnContainer');
             var interestsCentered = false;
 
             var showGame2 = document.getElementById('showGame2');
@@ -154,36 +168,23 @@
             var game2Frame = document.getElementById('game2Frame');
             var game2Visible = false;
 
-            if (showGame && gameContainer && gameFrame && gameBtnContainer) {
-                showGame.onclick = function() {
-                    centered = !centered;
-                    if (centered) {
-                        gameBtnContainer.style.textAlign = 'center';
-                        gameBtnContainer.style.paddingLeft = '0';
-                        gameContainer.style.display = 'block';
-                        setTimeout(function() {
-                            window.scrollTo({ top: gameContainer.offsetTop, behavior: 'smooth' });
-                        }, 100);
-                    } else {
-                        gameBtnContainer.style.textAlign = 'left';
-                        gameBtnContainer.style.paddingLeft = '60px';
-                        gameContainer.style.display = 'none';
-                    }
-                };
-            }
-            if (showInterests && interestsContainer && interestsBtnContainer) {
-                showInterests.onclick = function() {
+            var showGameMain = document.getElementById('showGameMain');
+            var triviaAndClickBtns = document.getElementById('triviaAndClickBtns');
+            var triviaClickVisible = false;
+
+            if (showMe && interestsContainer && meBtnContainer) {
+                showMe.onclick = function() {
                     interestsCentered = !interestsCentered;
                     if (interestsCentered) {
-                        interestsBtnContainer.style.textAlign = 'center';
-                        interestsBtnContainer.style.paddingLeft = '0';
+                        meBtnContainer.style.textAlign = 'center';
+                        meBtnContainer.style.paddingLeft = '0';
                         interestsContainer.style.display = 'block';
                         setTimeout(function() {
                             window.scrollTo({ top: interestsContainer.offsetTop, behavior: 'smooth' });
                         }, 100);
                     } else {
-                        interestsBtnContainer.style.textAlign = 'left';
-                        interestsBtnContainer.style.paddingLeft = '60px';
+                        meBtnContainer.style.textAlign = 'left';
+                        meBtnContainer.style.paddingLeft = '60px';
                         interestsContainer.style.display = 'none';
                     }
                 };
@@ -200,6 +201,12 @@
                     } else {
                         container.style.display = 'none';
                     }
+                };
+            }
+            if (showGameMain && triviaAndClickBtns) {
+                showGameMain.onclick = function() {
+                    triviaClickVisible = !triviaClickVisible;
+                    triviaAndClickBtns.style.display = triviaClickVisible ? 'inline-block' : 'none';
                 };
             }
         });
