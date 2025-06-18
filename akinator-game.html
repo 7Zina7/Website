@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Akinator Game</title>
+    <style>
+        body { background: #181c24; color: #fff; font-family: Arial, sans-serif; text-align: center; }
+        .game-box { background: rgba(0,0,0,0.7); border-radius: 1em; padding: 2em; margin: 3em auto; max-width: 500px; box-shadow: 0 0 20px #4fa84f; }
+        button { font-size: 1.2em; margin: 1em; padding: 0.5em 2em; border-radius: 0.5em; border: none; background: #4fa84f; color: #fff; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #388e3c; }
+    </style>
+</head>
+<body>
+    <div class="game-box">
+        <h1>Mini Akinator</h1>
+        <div id="question"></div>
+        <div id="answers">
+            <button onclick="answer('yes')">Yes</button>
+            <button onclick="answer('no')">No</button>
+        </div>
+        <div id="result" style="margin-top:2em;font-size:1.3em;"></div>
+        <button id="continueBtn" style="display:none;" onclick="continueGuessing()">Continue</button>
+        <button id="restartBtn" style="display:none;" onclick="restart()">Restart</button>
+    </div>
+    <script>
+        // --- Akinator-like logic ---
+        // Knowledge base: characters and their properties
+        const characters = [
+            { name: "Dog", animal: true, barks: true, pet: true, electronic: false, edible: false, fruit: false, vehicle: false, swims: false, yellow: false, red: false, furry: true, hasWheels: false },
+            { name: "Cat", animal: true, barks: false, pet: true, electronic: false, edible: false, fruit: false, vehicle: false, swims: false, yellow: false, red: false, furry: true, hasWheels: false },
+            { name: "Phone", animal: false, barks: false, pet: false, electronic: true, edible: false, calls: true, fruit: false, vehicle: false, swims: false, yellow: false, red: false, furry: false, hasWheels: false },
+            { name: "Computer", animal: false, barks: false, pet: false, electronic: true, edible: false, calls: false, fruit: false, vehicle: false, swims: false, yellow: false, red: false, furry: false, hasWheels: false },
+            { name: "Apple", animal: false, barks: false, pet: false, electronic: false, edible: true, fruit: true, vehicle: false, swims: false, yellow: false, red: true, furry: false, hasWheels: false },
+            { name: "Car", animal: false, barks: false, pet: false, electronic: true, edible: false, calls: false, fruit: false, vehicle: true, swims: false, yellow: false, red: false, furry: false, hasWheels: true },
+            { name: "Banana", animal: false, barks: false, pet: false, electronic: false, edible: true, fruit: true, vehicle: false, swims: false, yellow: true, red: false, furry: false, hasWheels: false },
+            { name: "Goldfish", animal: true, barks: false, pet: true, electronic: false, edible: false, fruit: false, vehicle: false, swims: true, yellow: true, red: false, furry: false, hasWheels: false },
+        ];
+        // List of possible questions
+        const questionList = [
+            { key: "animal", text: "Is it an animal?" },
+            { key: "pet", text: "Is it usually kept as a pet?" },
+            { key: "barks", text: "Does it bark?" },
+            { key: "electronic", text: "Is it electronic?" },
+            { key: "calls", text: "Is it used for calling?" },
+            { key: "edible", text: "Is it edible?" },
+            { key: "fruit", text: "Is it a fruit?" },
+            { key: "vehicle", text: "Is it a vehicle?" },
+            { key: "swims", text: "Can it swim?" },
+            { key: "yellow", text: "Is it yellow?" },
+            { key: "red", text: "Is it red?" },
+            { key: "furry", text: "Is it furry?" },
+            { key: "hasWheels", text: "Does it have wheels?" }
+        ];
+        // Remove all generic placeholder questions, keep only meaningful ones
+        // (No loop to add 1000 generic questions)
+        // Add the same properties to all characters (default: false)
+        characters.forEach(c => {
+            for (let i = 1; i <= 1000; i++) {
+                if (typeof c["q"+i] === 'undefined') c["q"+i] = false;
+            }
+        });
+        let possible = [...characters];
+        let asked = [];
+        let currentQ = null;
+        function pickQuestion() {
+            // Pick the next question that best splits the remaining options
+            let bestQ = null, bestDiff = possible.length;
+            for (let q of questionList) {
+                if (asked.includes(q.key)) continue;
+                let yes = possible.filter(c => c[q.key]);
+                let no = possible.filter(c => c[q.key] === false);
+                let diff = Math.abs(yes.length - no.length);
+                if (yes.length === 0 || no.length === 0) continue; // skip if doesn't split
+                if (diff < bestDiff) {
+                    bestDiff = diff;
+                    bestQ = q;
+                }
+            }
+            return bestQ;
+        }
+        function showAkinatorQuestion() {
+            document.getElementById('result').innerText = '';
+            document.getElementById('restartBtn').style.display = 'none';
+            document.getElementById('continueBtn').style.display = 'none';
+            if (possible.length === 1) {
+                document.getElementById('question').innerText = '';
+                document.getElementById('answers').style.display = 'none';
+                document.getElementById('result').innerText = "I guess: " + possible[0].name + "!";
+                document.getElementById('restartBtn').style.display = 'inline-block';
+                return;
+            }
+            if (possible.length === 0) {
+                document.getElementById('question').innerText = '';
+                document.getElementById('answers').style.display = 'none';
+                document.getElementById('result').innerText = "I don't know what it is!";
+                document.getElementById('restartBtn').style.display = 'inline-block';
+                return;
+            }
+            let q = pickQuestion();
+            if (!q) {
+                // No more questions to ask
+                let names = possible.map(c => c.name).join(', ');
+                document.getElementById('question').innerText = '';
+                document.getElementById('answers').style.display = 'none';
+                document.getElementById('result').innerText = "My best guesses: " + names;
+                // Only show continue if there are still unanswered questions
+                let unanswered = questionList.filter(q => !asked.includes(q.key));
+                if (unanswered.length > 0) {
+                    document.getElementById('continueBtn').style.display = 'inline-block';
+                } else {
+                    document.getElementById('continueBtn').style.display = 'none';
+                    document.getElementById('result').innerText += "\nNo more questions to ask.";
+                }
+                document.getElementById('restartBtn').style.display = 'inline-block';
+                return;
+            }
+            currentQ = q;
+            document.getElementById('question').innerText = q.text;
+            document.getElementById('answers').style.display = 'block';
+        }
+        function answer(ans) {
+            if (!currentQ) return;
+            asked.push(currentQ.key);
+            possible = possible.filter(c => (ans === 'yes' ? c[currentQ.key] : c[currentQ.key] === false));
+            showAkinatorQuestion();
+        }
+        function continueGuessing() {
+            // Find the next unanswered question
+            let unanswered = questionList.filter(q => !asked.includes(q.key));
+            if (unanswered.length === 0) {
+                document.getElementById('continueBtn').style.display = 'none';
+                document.getElementById('result').innerText += "\nNo more questions to ask.";
+                return;
+            }
+            // Remove the last asked question from asked to allow it to be asked again
+            // (or just allow the next best question to be asked)
+            // We'll just proceed to ask the next best question
+            showAkinatorQuestion();
+        }
+        function restart() {
+            possible = [...characters];
+            asked = [];
+            currentQ = null;
+            showAkinatorQuestion();
+        }
+        // Start game
+        showAkinatorQuestion();
+    </script>
+</body>
+</html>

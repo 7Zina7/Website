@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Block Blast Mini</title>
+  <style>
+    body { background: #181c24; color: #fff; font-family: Arial, sans-serif; text-align: center; }
+    .game-box { background: rgba(0,0,0,0.7); border-radius: 1em; padding: 2em; margin: 3em auto; max-width: 600px; box-shadow: 0 0 20px #4fa84f; }
+    .grid { display: grid; grid-template-columns: repeat(9, 32px); grid-template-rows: repeat(9, 32px); gap: 2px; margin: 0 auto 2em auto; background: #222; border-radius: 0.5em; }
+    .cell { width: 32px; height: 32px; background: #333; border-radius: 0.2em; }
+    .cell.filled { background: #4fa84f; }
+    .pieces { display: flex; justify-content: center; gap: 2em; margin-top: 1em; }
+    .piece { display: inline-block; cursor: grab; }
+    .block { width: 28px; height: 28px; background: #90ee90; border-radius: 0.2em; margin: 2px; display: inline-block; }
+    .score { font-size: 1.3em; margin-bottom: 1em; }
+    button { margin-top: 1em; padding: 0.5em 2em; border-radius: 0.5em; border: none; background: #4fa84f; color: #fff; font-size: 1.1em; cursor: pointer; }
+    button:hover { background: #388e3c; }
+  </style>
+</head>
+<body>
+  <div class="game-box">
+    <h1>Block Blast Mini</h1>
+    <div class="score">Score: <span id="score">0</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="pieces" id="pieces"></div>
+    <button onclick="restart()">Restart</button>
+  </div>
+  <script>
+    const gridSize = 9;
+    let grid = Array.from({length: gridSize}, () => Array(gridSize).fill(0));
+    let score = 0;
+    let currentPieces = [];
+    const pieceShapes = [
+      [[1]],
+      [[1,1]],
+      [[1],[1]],
+      [[1,1,1]],
+      [[1],[1],[1]],
+      [[1,1],[1,1]],
+      [[1,1,1],[0,1,0]],
+      [[1,1,1],[1,0,0]],
+      [[1,1,1],[0,0,1]],
+      [[1,0],[1,1]],
+      [[0,1],[1,1]],
+      [[1,1,1,1]],
+      [[1],[1],[1],[1]],
+      [[1,1,1],[1,1,1],[1,1,1]],
+      [[1,1,0],[0,1,1]],
+      [[0,1,1],[1,1,0]],
+      [[1,1,1],[0,1,0],[0,1,0]],
+      [[0,1,0],[1,1,1],[0,1,0]],
+      [[1,1,1,1,1]],
+      [[1],[1],[1],[1],[1]],
+    ];
+    let gameOver = false;
+    function drawGrid() {
+      const gridDiv = document.getElementById('grid');
+      gridDiv.innerHTML = '';
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell' + (grid[r][c] ? ' filled' : '');
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.ondragover = e => {
+            e.preventDefault();
+            if (gameOver) return;
+            const idx = +e.dataTransfer.getData('pieceIdx');
+            const shape = currentPieces[idx];
+            if (canPlace(shape, r, c)) {
+              cell.style.background = '#4fa84f';
+            } else {
+              cell.style.background = '#a94442';
+            }
+          };
+          cell.ondragleave = e => {
+            cell.style.background = grid[r][c] ? '#4fa84f' : '#333';
+          };
+          cell.ondrop = e => {
+            cell.style.background = grid[r][c] ? '#4fa84f' : '#333';
+            if (gameOver) return;
+            const idx = +e.dataTransfer.getData('pieceIdx');
+            const shape = currentPieces[idx];
+            if (canPlace(shape, r, c)) {
+              placePiece(shape, r, c);
+              currentPieces.splice(idx, 1);
+              drawGrid();
+              drawPieces();
+              clearLines();
+              if (currentPieces.length === 0) newPieces();
+              if (!anyMoveAvailable()) setTimeout(gameOverScreen, 300);
+            }
+          };
+          gridDiv.appendChild(cell);
+        }
+      }
+    }
+    function drawPieces() {
+      const piecesDiv = document.getElementById('pieces');
+      piecesDiv.innerHTML = '';
+      currentPieces.forEach((shape, idx) => {
+        const pieceDiv = document.createElement('div');
+        pieceDiv.className = 'piece';
+        pieceDiv.draggable = !gameOver;
+        pieceDiv.dataset.idx = idx;
+        pieceDiv.ondragstart = e => {
+          if (gameOver) {
+            e.preventDefault();
+            return false;
+          }
+          e.dataTransfer.setData('pieceIdx', idx);
+        };
+        // Render the piece as a mini-grid
+        const pieceGrid = document.createElement('div');
+        pieceGrid.style.display = 'inline-grid';
+        pieceGrid.style.gridTemplateColumns = `repeat(${shape[0].length}, 28px)`;
+        pieceGrid.style.gridTemplateRows = `repeat(${shape.length}, 28px)`;
+        pieceGrid.style.gap = '2px';
+        shape.forEach((row, r) => {
+          row.forEach((val, c) => {
+            const block = document.createElement('div');
+            block.style.width = '28px';
+            block.style.height = '28px';
+            block.style.borderRadius = '0.2em';
+            block.style.background = val ? '#90ee90' : 'transparent';
+            block.style.display = 'inline-block';
+            pieceGrid.appendChild(block);
+          });
+        });
+        pieceDiv.appendChild(pieceGrid);
+        if (!canPlaceAnywhere(shape)) {
+          pieceDiv.style.opacity = 0.3;
+          pieceDiv.title = 'No valid moves for this piece';
+        }
+        piecesDiv.appendChild(pieceDiv);
+      });
+    }
+    function canPlace(shape, row, col) {
+      for (let r = 0; r < shape.length; r++) {
+        for (let c = 0; c < shape[r].length; c++) {
+          if (shape[r][c]) {
+            // Only check bounds and collision for actual blocks
+            if (row + r < 0 || row + r >= gridSize || col + c < 0 || col + c >= gridSize) return false;
+            if (grid[row + r][col + c]) return false;
+          }
+        }
+      }
+      return true;
+    }
+    function canPlaceAnywhere(shape) {
+      // Only allow placements where the top-left of the piece is within the grid
+      for (let r = 0; r <= gridSize - shape.length; r++) {
+        for (let c = 0; c <= gridSize - shape[0].length; c++) {
+          if (canPlace(shape, r, c)) return true;
+        }
+      }
+      return false;
+    }
+    function anyMoveAvailable() {
+      return currentPieces.some(canPlaceAnywhere);
+    }
+    function randomPiece() {
+      return JSON.parse(JSON.stringify(pieceShapes[Math.floor(Math.random()*pieceShapes.length)]));
+    }
+    function newPieces() {
+      currentPieces = [randomPiece(), randomPiece(), randomPiece()];
+      drawPieces();
+      if (!anyMoveAvailable()) {
+        setTimeout(gameOverScreen, 300);
+      }
+    }
+    function placePiece(shape, row, col) {
+      let placedBlocks = 0;
+      for (let r = 0; r < shape.length; r++) {
+        for (let c = 0; c < shape[r].length; c++) {
+          if (shape[r][c]) {
+            grid[row+r][col+c] = 1;
+            placedBlocks++;
+          }
+        }
+      }
+      // Add score for each block placed
+      score += placedBlocks;
+      document.getElementById('score').innerText = score;
+    }
+    function clearLines() {
+      let clearedRows = [];
+      let clearedCols = [];
+      // Find full rows
+      for (let r = 0; r < gridSize; r++) {
+        if (grid[r].every(x => x)) clearedRows.push(r);
+      }
+      // Find full columns
+      for (let c = 0; c < gridSize; c++) {
+        if (grid.every(row => row[c])) clearedCols.push(c);
+      }
+      // Remove full rows
+      clearedRows.forEach(r => {
+        grid[r] = Array(gridSize).fill(0);
+      });
+      // Remove full columns
+      clearedCols.forEach(c => {
+        for (let r = 0; r < gridSize; r++) grid[r][c] = 0;
+      });
+      drawGrid(); // Immediately update the grid visually
+      // Scoring
+      let blocksCleared = clearedRows.length * gridSize + clearedCols.length * gridSize;
+      let combo = (clearedRows.length + clearedCols.length) > 1;
+      let placementScore = 0;
+      // Score for each block placed
+      placementScore += 1;
+      // Score for clearing lines
+      placementScore += blocksCleared;
+      // Combo bonus
+      if (combo) placementScore += 5 * (clearedRows.length + clearedCols.length - 1);
+      score += placementScore;
+      document.getElementById('score').innerText = score;
+      // Optionally, show combo/bonus feedback (alert or animation)
+      if (combo && (clearedRows.length + clearedCols.length) > 1) {
+        setTimeout(() => alert('Combo!'), 100);
+      }
+    }
+    function gameOverScreen() {
+      gameOver = true;
+      alert('Game Over! Your score: ' + score);
+    }
+    function restart() {
+      grid = Array.from({length: gridSize}, () => Array(gridSize).fill(0));
+      score = 0;
+      gameOver = false;
+      document.getElementById('score').innerText = score;
+      newPieces();
+      drawGrid();
+    }
+    // Start game
+    restart();
+  </script>
+</body>
+</html>
